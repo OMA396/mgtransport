@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>M&G للنقل و الشحن</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Cairo', sans-serif;
+      scroll-behavior: smooth;
+    }
+
+    header {
+      background-color: #f9f9f9;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    header img {
+      width: 320px;
+      max-width: 90%;
+      height: auto;
+      display: block;
+      margin: auto;
+    }
+
+    nav {
+      margin-top: 1rem;
+    }
+
+    nav ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: center;
+    }
+
+    nav a {
+      text-decoration: none;
+      font-size: 1.3rem;
+      color: black;
+      transition: color 0.3s ease;
+    }
+
+    nav a:hover {
+      color: brown;
+    }
+
+    @media (min-width: 768px) {
+      nav ul {
+        flex-direction: row;
+        justify-content: center;
+        gap: 3rem;
+      }
+    }
+
+    .hero {
+      background-color: darkslategray;
+      color: white;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      padding: 2rem 1rem;
+      text-align: right;
+    }
+
+    .heroimg {
+      width: 90%;
+      max-width: 350px;
+      height: auto;
+      border-radius: 2rem;
+      object-fit: cover;
+      margin: 1rem;
+    }
+
+    .herotext {
+      max-width: 600px;
+      padding: 1rem;
+      font-size: 1.2rem;
+      line-height: 1.8;
+    }
+
+    .servies {
+      background-image: url(b.png);
+      background-size: cover;
+      background-position: center;
+      color: white;
+      padding: 3rem 1rem;
+      text-align: right;
+      position: relative;
+    }
+
+    .servies::before {
+      content: "";
+      position: absolute;
+      top: 0; right: 0; bottom: 0; left: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 0;
+    }
+
+    .servies-content {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: auto;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 2rem;
+      border-radius: 1rem;
+      backdrop-filter: blur(5px);
+    }
+
+    .servies-content h2 {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      color: #fff;
+    }
+
+    .servies-content ul {
+      list-style: none;
+      padding: 0;
+      font-size: 1.2rem;
+      line-height: 2;
+    }
+
+    .section-title {
+      text-align: center;
+      font-size: 2rem;
+      margin: 2rem 0 1rem;
+      color: #222;
+    }
+
+    .product-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.5rem;
+      padding: 1rem 2rem 3rem;
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+    }
+
+    .card img, .card video {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+    }
+
+    .card-content {
+      padding: 1rem;
+    }
+
+    .card-content h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      color: #2e2e2e;
+    }
+
+    .card-content p {
+      font-size: 1rem;
+      margin: 0.5rem 0;
+      color: #555;
+    }
+
+    .card-content a {
+      display: inline-block;
+      margin-top: 0.5rem;
+      color: darkslategrey;
+      font-weight: bold;
+      text-decoration: none;
+    }
+
+    .card-content a:hover {
+      color: #009688;
+    }
+
+    #contact {
+      padding: 2rem;
+      background-color: #f1f1f1;
+      text-align: center;
+    }
+
+    #contact img {
+      width:50px;
+      height: 50px;
+      margin-bottom: 1rem;
+    }
+
+    #contact a {
+      color: #25D366;
+      text-decoration: none;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- الهيدر -->
+  <header>
+    <img src="ChatGPT Image Jun 11, 2025, 03_07_22 PM.png" alt="شعار M&G">
+    <nav>
+      <ul>
+        <li><a href="#hero">عن M&G</a></li>
+        <li><a href="#products">خدماتنا</a></li>
+        <li><a href="#contact">اتصل بنا</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <!-- القسم الأول -->
+  <section class="hero" id="hero">
+    <img src="h.png" class="heroimg" alt="صورة شاحنة">
+    <div class="herotext">
+      <h2>M & G للنقل والشحن</h2>
+      <p>
+        خبرة سنوات في مجال النقل البري إلى جميع المحافظات.  
+        نوفر جميع أنواع سيارات النقل لخدمة الشركات والمصانع،  
+        مع إمكانية التعاقد بنظام أسبوعي، شهري، أو بالنقلة حسب الاتفاق.  
+        نضمن لكم سهولة في التعامل واحترافية في الأداء.
+      </p>
+    </div>
+  </section>
+
+  <!-- القسم الثاني -->
+  <section class="servies">
+    <div class="servies-content">
+      <h2>أنواع سيارات النقل المتوفرة</h2>
+      <ul>
+        <li>🚚 دبابة صندوق مفتوح</li>
+        <li>🚛 دبابة صندوق مغلق</li>
+        <li>❄️ دبابة تبريد وتجميد</li>
+        <li>🚚 جامبو صندوق مفتوح</li>
+        <li>🚛 جامبو صندوق مغلق</li>
+        <li>❄️ جامبو تبريد وتجميد</li>
+        <li>📦 جامبو صندوق للعفش</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- القسم الثالث -->
+  <section class="product-section" id="products">
+    <h2 class="section-title">خدماتنا</h2>
+    <div class="product-grid" id="productGrid"></div>
+  </section>
+
+  <!-- التواصل -->
+  <section id="contact">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
+    <p>تواصل معنا على <strong style="color:#25D366;">واتساب</strong> مع <strong>الأستاذ إبراهيم محمد</strong></p>
+    <p>📞 <a href="https://wa.me/201010872267">+201010872267</a></p>
+  </section>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDnFoa6C2FIxeK06Y1fj0_8u9LyF4ma8sg",
+      authDomain: "mgtrasport-53d7e.firebaseapp.com",
+      databaseURL: "https://mgtrasport-53d7e-default-rtdb.firebaseio.com",
+      projectId: "mgtrasport-53d7e",
+      storageBucket: "mgtrasport-53d7e.appspot.com",
+      messagingSenderId: "950504597071",
+      appId: "1:950504597071:web:eec286bb6103bf0037ec3a"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const params = new URLSearchParams(window.location.search);
+    const isAdmin = params.get("admin") === "1234";
+
+    function loadProducts() {
+      const grid = document.getElementById("productGrid");
+      db.ref("products").on("value", (snapshot) => {
+        grid.innerHTML = "";
+        snapshot.forEach(child => {
+          const data = child.val();
+          const id = child.key;
+          grid.innerHTML += `
+            <div class="card">
+              ${data.video ? `<video controls src="${data.video}"></video>` : `<img src="${data.image}" alt="${data.name}">`}
+              <div class="card-content">
+                <h3>${data.name}</h3>
+                <p>${data.description}</p>
+                <a href="details.html?name=${encodeURIComponent(data.name)}&desc=${encodeURIComponent(data.description)}&image=${encodeURIComponent(data.image)}&video=${encodeURIComponent(data.video || '')}">تفاصيل</a>
+                ${isAdmin ? `<br><button onclick="deleteProduct('${id}')" style="margin-top: 0.5rem; background-color: red; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;">🗑️ حذف</button>` : ""}
+              </div>
+            </div>
+          `;
+        });
+      });
+    }
+
+    function deleteProduct(id) {
+      if (confirm("هل أنت متأكد أنك تريد حذف هذا المنتج؟")) {
+        db.ref("products").child(id).remove()
+          .then(() => alert("✅ تم حذف المنتج بنجاح"))
+          .catch(error => alert("❌ حدث خطأ أثناء الحذف: " + error.message));
+      }
+    }
+
+    if (isAdmin) {
+      const form = document.createElement("div");
+      form.innerHTML = `
+        <div style="padding: 2rem;">
+          <h2 style="text-align:center;">إضافة منتج جديد</h2>
+          <div style="max-width: 400px; margin:auto;">
+            <input id="name" type="text" placeholder="اسم المنتج" style="width:100%; padding:10px; margin:10px 0;">
+            <input id="image" type="text" placeholder="رابط الصورة (اختياري إذا كان هناك فيديو)" style="width:100%; padding:10px; margin:10px 0;">
+            <input id="video" type="text" placeholder="رابط الفيديو (اختياري)" style="width:100%; padding:10px; margin:10px 0;">
+            <textarea id="desc" placeholder="وصف المنتج" style="width:100%; padding:10px; margin:10px 0;"></textarea>
+            <button onclick="addProduct()" style="background-color:green; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">➕ إضافة المنتج</button>
+          </div>
+        </div>
+      `;
+      document.body.insertBefore(form, document.getElementById("contact"));
+    }
+
+    function addProduct() {
+      const name = document.getElementById("name").value.trim();
+      const image = document.getElementById("image").value.trim();
+      const video = document.getElementById("video").value.trim();
+      const desc = document.getElementById("desc").value.trim();
+
+      if (!name || !desc) {
+        alert("يرجى تعبئة الحقول المطلوبة");
+        return;
+      }
+
+      db.ref("products").push({ name, image, video, description: desc }, (error) => {
+        if (error) {
+          alert("❌ حدث خطأ أثناء الإضافة: " + error.message);
+        } else {
+          alert("✅ تمت إضافة المنتج بنجاح!");
+          document.getElementById("name").value = "";
+          document.getElementById("image").value = "";
+          document.getElementById("video").value = "";
+          document.getElementById("desc").value = "";
+        }
+      });
+    }
+
+    loadProducts();
+  </script>
+</body>
+</html>
