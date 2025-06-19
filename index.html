@@ -252,7 +252,6 @@
   };
 
   firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
   const db = firebase.database();
 
   const params = new URLSearchParams(window.location.search);
@@ -265,16 +264,18 @@
       snapshot.forEach(child => {
         const data = child.val();
         const id = child.key;
+        const isVideo = data.image.includes("pixeldrain.com");
+
+        const mediaElement = isVideo
+          ? `<video controls style="width:100%; height:200px;">
+               <source src="${data.image.replace('/u/', '/api/file/')}" type="video/mp4">
+               متصفحك لا يدعم تشغيل الفيديو.
+             </video>`
+          : `<img src="${data.image}" alt="${data.name}" style="width:100%; height:200px; object-fit:cover;">`;
+
         grid.innerHTML += `
           <div class="card">
-            ${data.isVideo ? `
-              <video controls style="width:100%; height:200px; object-fit:cover;">
-                <source src="${data.image.includes('pixeldrain.com') ? data.image.replace('/u/', '/api/file/') : data.image}" type="video/mp4">
-                المتصفح لا يدعم تشغيل الفيديو.
-              </video>
-            ` : `
-              <img src="${data.image}" alt="${data.name}" style="width:100%; height:200px; object-fit:cover;">
-            `}
+            ${mediaElement}
             <div class="card-content">
               <h3>${data.name}</h3>
               <p>${data.description}</p>
@@ -307,10 +308,7 @@
         <h2 style="text-align:center;">إضافة منتج جديد</h2>
         <div style="max-width: 400px; margin:auto;">
           <input id="name" type="text" placeholder="اسم المنتج" style="width:100%; padding:10px; margin:10px 0;">
-          <input id="image" type="text" placeholder="رابط الصورة أو الفيديو" style="width:100%; padding:10px; margin:10px 0;">
-          <label style="display:block; margin-bottom:10px;">
-            <input type="checkbox" id="isVideo" /> هذا الرابط لفيديو
-          </label>
+          <input id="image" type="text" placeholder="رابط الصورة أو الفيديو من Pixeldrain" style="width:100%; padding:10px; margin:10px 0;">
           <textarea id="desc" placeholder="وصف المنتج" style="width:100%; padding:10px; margin:10px 0;"></textarea>
           <button onclick="addProduct()" style="background-color:green; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">➕ إضافة المنتج</button>
         </div>
@@ -321,16 +319,20 @@
 
   function addProduct() {
     const name = document.getElementById("name").value.trim();
-    const image = document.getElementById("image").value.trim();
+    let image = document.getElementById("image").value.trim();
     const desc = document.getElementById("desc").value.trim();
-    const isVideo = document.getElementById("isVideo").checked;
 
     if (!name || !image || !desc) {
       alert("يرجى تعبئة جميع الحقول");
       return;
     }
 
-    db.ref("products").push({ name, image, description: desc, isVideo }, (error) => {
+    // تعديل الرابط لو كان من Pixeldrain
+    if (image.includes("pixeldrain.com/u/")) {
+      image = image.replace("/u/", "/api/file/");
+    }
+
+    db.ref("products").push({ name, image, description: desc }, (error) => {
       if (error) {
         alert("❌ حدث خطأ أثناء الإضافة: " + error.message);
       } else {
@@ -338,7 +340,6 @@
         document.getElementById("name").value = "";
         document.getElementById("image").value = "";
         document.getElementById("desc").value = "";
-        document.getElementById("isVideo").checked = false;
       }
     });
   }
