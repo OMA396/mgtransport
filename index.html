@@ -240,19 +240,19 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
 <script>
-  // إعدادات Firebase الصحيحة
   const firebaseConfig = {
-    apiKey: "AIzaSyDnFoa6ZFxlxeK06Y1fj0_8u9LYf4ma8sg",
+    apiKey: "AIzaSyDnFoaC6ZFlxeK06YlfjO_8u9LyF4ma8sg",
     authDomain: "mgtrasport-53d7e.firebaseapp.com",
     databaseURL: "https://mgtrasport-53d7e-default-rtdb.firebaseio.com",
     projectId: "mgtrasport-53d7e",
     storageBucket: "mgtrasport-53d7e.appspot.com",
     messagingSenderId: "950504597071",
-    appId: "1:950504597071:web:eeec286bb613bf0037ec3a",
+    appId: "1:950504597071:web:eec286bb6103bf0037ec3a",
     measurementId: "G-XS1920ESD0"
   };
 
   firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
   const db = firebase.database();
 
   const params = new URLSearchParams(window.location.search);
@@ -265,24 +265,20 @@
       snapshot.forEach(child => {
         const data = child.val();
         const id = child.key;
-
-        let media = "";
-        if (data.video && data.video.includes("streamable.com")) {
-          const videoId = data.video.split("/").pop();
-          media = `<iframe src="https://streamable.com/e/${videoId}" frameborder="0" allowfullscreen style="width:100%; height:200px;"></iframe>`;
-        } else if (data.video) {
-          media = `<video controls src="${data.video}" style="width:100%; height:200px; object-fit:cover;"></video>`;
-        } else {
-          media = `<img src="${data.image}" alt="${data.name}" style="width:100%; height:200px; object-fit:cover;">`;
-        }
-
         grid.innerHTML += `
           <div class="card">
-            ${media}
+            ${data.isVideo ? `
+              <video controls style="width:100%; height:200px; object-fit:cover;">
+                <source src="${data.image.includes('pixeldrain.com') ? data.image.replace('/u/', '/api/file/') : data.image}" type="video/mp4">
+                المتصفح لا يدعم تشغيل الفيديو.
+              </video>
+            ` : `
+              <img src="${data.image}" alt="${data.name}" style="width:100%; height:200px; object-fit:cover;">
+            `}
             <div class="card-content">
               <h3>${data.name}</h3>
               <p>${data.description}</p>
-              <a href="details.html?name=${encodeURIComponent(data.name)}&desc=${encodeURIComponent(data.description)}&image=${encodeURIComponent(data.image || "")}&video=${encodeURIComponent(data.video || "")}">تفاصيل</a>
+              <a href="details.html?name=${encodeURIComponent(data.name)}&desc=${encodeURIComponent(data.description)}&image=${encodeURIComponent(data.image)}">تفاصيل</a>
               ${isAdmin ? `<br><button onclick="deleteProduct('${id}')" style="margin-top: 0.5rem; background-color: red; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;">🗑️ حذف</button>` : ""}
             </div>
           </div>
@@ -294,8 +290,13 @@
   function deleteProduct(id) {
     if (confirm("هل أنت متأكد أنك تريد حذف هذا المنتج؟")) {
       db.ref("products").child(id).remove()
-        .then(() => alert("✅ تم حذف المنتج بنجاح"))
-        .catch(error => alert("❌ حدث خطأ أثناء الحذف: " + error.message));
+        .then(() => {
+          alert("✅ تم حذف المنتج بنجاح");
+          location.reload();
+        })
+        .catch(error => {
+          alert("❌ حدث خطأ أثناء الحذف: " + error.message);
+        });
     }
   }
 
@@ -306,8 +307,10 @@
         <h2 style="text-align:center;">إضافة منتج جديد</h2>
         <div style="max-width: 400px; margin:auto;">
           <input id="name" type="text" placeholder="اسم المنتج" style="width:100%; padding:10px; margin:10px 0;">
-          <input id="image" type="text" placeholder="رابط الصورة (اختياري إذا كان هناك فيديو)" style="width:100%; padding:10px; margin:10px 0;">
-          <input id="video" type="text" placeholder="رابط الفيديو (اختياري - مثال: https://streamable.com/e/xyz123)" style="width:100%; padding:10px; margin:10px 0;">
+          <input id="image" type="text" placeholder="رابط الصورة أو الفيديو" style="width:100%; padding:10px; margin:10px 0;">
+          <label style="display:block; margin-bottom:10px;">
+            <input type="checkbox" id="isVideo" /> هذا الرابط لفيديو
+          </label>
           <textarea id="desc" placeholder="وصف المنتج" style="width:100%; padding:10px; margin:10px 0;"></textarea>
           <button onclick="addProduct()" style="background-color:green; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">➕ إضافة المنتج</button>
         </div>
@@ -319,29 +322,30 @@
   function addProduct() {
     const name = document.getElementById("name").value.trim();
     const image = document.getElementById("image").value.trim();
-    const video = document.getElementById("video").value.trim();
     const desc = document.getElementById("desc").value.trim();
+    const isVideo = document.getElementById("isVideo").checked;
 
-    if (!name || !desc) {
-      alert("يرجى تعبئة اسم المنتج والوصف على الأقل");
+    if (!name || !image || !desc) {
+      alert("يرجى تعبئة جميع الحقول");
       return;
     }
 
-    db.ref("products").push({ name, image, video, description: desc }, (error) => {
+    db.ref("products").push({ name, image, description: desc, isVideo }, (error) => {
       if (error) {
         alert("❌ حدث خطأ أثناء الإضافة: " + error.message);
       } else {
         alert("✅ تمت إضافة المنتج بنجاح!");
         document.getElementById("name").value = "";
         document.getElementById("image").value = "";
-        document.getElementById("video").value = "";
         document.getElementById("desc").value = "";
+        document.getElementById("isVideo").checked = false;
       }
     });
   }
 
   loadProducts();
 </script>
+
 
 
 
