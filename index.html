@@ -233,12 +233,8 @@
   <p>📧 راسلنا عبر الإيميل: <strong><a href="mailto:ibrahammohamad55@gmail.com">ibrahammohamad55@gmail.com</a></strong></p>
 </section>
 
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
-
-<!-- ... بقية الكود كما هو ... -->
 
 <script>
   const firebaseConfig = {
@@ -253,10 +249,6 @@
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
-  const storage = firebase.storage();
-
-  const params = new URLSearchParams(window.location.search);
-  const isAdmin = params.get("admin") === "1234";
 
   function loadProducts() {
     const grid = document.getElementById("productGrid");
@@ -264,7 +256,6 @@
       grid.innerHTML = "";
       snapshot.forEach(child => {
         const data = child.val();
-        const id = child.key;
 
         if (data.image.includes("pixeldrain.com/u/")) {
           data.image = data.image.replace("/u/", "/api/file/") + "?download";
@@ -283,98 +274,14 @@
               <h3>${data.name}</h3>
               <p>${data.description}</p>
               <a href="details.html?name=${encodeURIComponent(data.name)}&desc=${encodeURIComponent(data.description)}&image=${encodeURIComponent(data.image)}">تفاصيل</a>
-              ${isAdmin ? `<br><button onclick="deleteProduct('${id}')" style="margin-top: 0.5rem; background-color: red; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;">🗑️ حذف</button>` : ""}
             </div>
           </div>`;
       });
     });
   }
 
-  function deleteProduct(id) {
-    if (confirm("هل أنت متأكد أنك تريد حذف هذا المنتج؟")) {
-      db.ref("products").child(id).remove().then(() => location.reload());
-    }
-  }
-
-  if (isAdmin) {
-    const form = document.createElement("div");
-    form.innerHTML = `
-      <div style="padding: 2rem;">
-        <h2 style="text-align:center;">إضافة منتج جديد</h2>
-        <div style="max-width: 400px; margin:auto;">
-          <input id="name" type="text" placeholder="اسم المنتج" style="width:100%; padding:10px; margin:10px 0;">
-          <input id="image" type="text" placeholder="رابط الصورة أو الفيديو من Pixeldrain" style="width:100%; padding:10px; margin:10px 0;">
-          <textarea id="desc" placeholder="وصف المنتج" style="width:100%; padding:10px; margin:10px 0;"></textarea>
-          <button onclick="addProduct()" style="background-color:green; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">➕ إضافة المنتج</button>
-        </div>
-      </div>
-    `;
-    document.body.insertBefore(form, document.getElementById("contact"));
-
-    const uploadForm = document.createElement("div");
-    uploadForm.innerHTML = `
-      <div style="padding: 2rem; border-top: 1px solid #ccc;">
-        <h2 style="text-align:center;">أو ✚ أضف من جهازك مباشرة</h2>
-        <div style="max-width:400px; margin:auto;">
-          <input type="file" id="uploadFile" accept="image/*,video/*" style="margin-bottom:10px; width:100%; padding:10px;">
-          <input id="uploadDesc" type="text" placeholder="وصف المحتوى" style="width:100%; padding:10px; margin-bottom:10px;">
-          <button onclick="uploadFromDevice()" id="uploadBtn" style="background-color:#009688; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">رفع وإضافة</button>
-          <p id="uploadStatus" style="color:green; margin-top:10px;"></p>
-        </div>
-      </div>
-    `;
-    document.body.insertBefore(uploadForm, document.getElementById("contact"));
-  }
-
-  function addProduct() {
-    const name = document.getElementById("name").value.trim();
-    let image = document.getElementById("image").value.trim();
-    const desc = document.getElementById("desc").value.trim();
-
-    if (!name || !image || !desc) {
-      alert("❗ يرجى تعبئة جميع الحقول");
-      return;
-    }
-
-    if (image.includes("pixeldrain.com/u/")) {
-      image = image.replace("/u/", "/api/file/") + "?download";
-    }
-
-    const addButton = document.querySelector("button[onclick='addProduct()']");
-    const originalText = addButton.innerHTML;
-    addButton.innerHTML = "⏳ جاري الإضافة...";
-    addButton.disabled = true;
-
-    db.ref("products").push({ name, image, description: desc })
-      .then(() => {
-        alert("✅ تم إضافة المنتج بنجاح!");
-        document.getElementById("name").value = "";
-        document.getElementById("image").value = "";
-        document.getElementById("desc").value = "";
-        loadProducts();
-      })
-      .catch(err => {
-        alert("❌ حدث خطأ: " + err.message);
-      })
-      .finally(() => {
-        addButton.innerHTML = originalText;
-        addButton.disabled = false;
-      });
-  }
-
- 
-        loadProducts();
-      })
-      .catch(err => status.textContent = "❌ خطأ: " + err.message)
-      .finally(() => {
-        button.disabled = false;
-        button.textContent = "رفع وإضافة";
-      });
-  }
-
   loadProducts();
 </script>
-
 
 </body>
 </html>
