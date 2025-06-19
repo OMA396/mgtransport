@@ -362,36 +362,7 @@
       });
   }
 
-  function uploadFromDevice() {
-    const fileInput = document.getElementById("uploadFile");
-    const file = fileInput.files[0];
-    const desc = document.getElementById("uploadDesc").value.trim();
-    const status = document.getElementById("uploadStatus");
-    const button = document.getElementById("uploadBtn");
-
-    if (!file || !desc) {
-      alert("❗ يرجى اختيار ملف وإدخال وصف.");
-      return;
-    }
-
-    status.textContent = "⏳ جاري الرفع...";
-    button.disabled = true;
-    button.textContent = "⬆️ جاري الرفع...";
-
-    const fileRef = firebase.storage().ref().child("uploads/" + Date.now() + "_" + file.name);
-    fileRef.put(file)
-      .then(() => fileRef.getDownloadURL())
-      .then(url => {
-        return db.ref("products").push({
-          name: "محتوى مرفوع",
-          image: url,
-          description: desc
-        });
-      })
-      .then(() => {
-        status.textContent = "✅ تم الرفع والإضافة بنجاح!";
-        fileInput.value = "";
-        document.getElementById("uploadDesc").value = "";
+ 
         loadProducts();
       })
       .catch(err => status.textContent = "❌ خطأ: " + err.message)
