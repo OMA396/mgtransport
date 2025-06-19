@@ -238,22 +238,25 @@
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
 <script>
+  // إعدادات Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyBUYFKVQ25vGirRrQ61rhbF20ppQeePHDA",
     authDomain: "mgcambany.firebaseapp.com",
     projectId: "mgcambany",
     storageBucket: "mgcambany.appspot.com",
     messagingSenderId: "748457475680",
-    appId: "1:748457475680:web:fbd1ecdcd54acc00760d05",
-    measurementId: "G-S5Z5FFLF9P"
+    appId: "1:748457475680:web:fbd1ecdcd54acc00760d05"
   };
 
+  // تفعيل Firebase
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
 
+  // التأكد إذا كان الدخول بصلاحية الأدمن
   const params = new URLSearchParams(window.location.search);
   const isAdmin = params.get("admin") === "1234";
 
+  // تحميل المنتجات
   function loadProducts() {
     const grid = document.getElementById("productGrid");
     db.ref("products").on("value", (snapshot) => {
@@ -261,37 +264,24 @@
       snapshot.forEach(child => {
         const data = child.val();
         const id = child.key;
-        let mediaElement = "";
 
+        let media = "";
         if (data.video && data.video.includes("streamable.com")) {
           const videoId = data.video.split("/").pop();
-          mediaElement = `
-            <iframe 
-              src="https://streamable.com/e/${videoId}" 
-              frameborder="0" 
-              allowfullscreen 
-              style="width:100%; height:200px;" 
-              onerror="this.parentElement.innerHTML='<p style=\'color:red; text-align:center;\'>⚠️ الفيديو غير متاح</p>'">
-            </iframe>`;
+          media = `<iframe src="https://streamable.com/e/${videoId}" frameborder="0" allowfullscreen style="width:100%; height:200px;"></iframe>`;
         } else if (data.video) {
-          mediaElement = `
-            <video controls 
-              src="${data.video}" 
-              style="width:100%; height:200px; object-fit:cover;" 
-              onerror="this.outerHTML='<p style=\'color:red; text-align:center;\'>⚠️ الفيديو غير متاح</p>'">
-            </video>`;
+          media = `<video controls src="${data.video}" style="width:100%; height:200px; object-fit:cover;"></video>`;
         } else {
-          mediaElement = `
-            <img src="${data.image}" alt="${data.name}" style="width:100%; height:200px; object-fit:cover;">`;
+          media = `<img src="${data.image}" alt="${data.name}" style="width:100%; height:200px; object-fit:cover;">`;
         }
 
         grid.innerHTML += `
           <div class="card">
-            ${mediaElement}
+            ${media}
             <div class="card-content">
               <h3>${data.name}</h3>
               <p>${data.description}</p>
-              <a href="details.html?name=${encodeURIComponent(data.name)}&desc=${encodeURIComponent(data.description)}&image=${encodeURIComponent(data.image)}&video=${encodeURIComponent(data.video || '')}">تفاصيل</a>
+              <a href="details.html?name=${encodeURIComponent(data.name)}&desc=${encodeURIComponent(data.description)}&image=${encodeURIComponent(data.image || "")}&video=${encodeURIComponent(data.video || "")}">تفاصيل</a>
               ${isAdmin ? `<br><button onclick="deleteProduct('${id}')" style="margin-top: 0.5rem; background-color: red; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;">🗑️ حذف</button>` : ""}
             </div>
           </div>
@@ -300,18 +290,16 @@
     });
   }
 
+  // حذف المنتج
   function deleteProduct(id) {
     if (confirm("هل أنت متأكد أنك تريد حذف هذا المنتج؟")) {
       db.ref("products").child(id).remove()
-        .then(() => {
-          alert("✅ تم حذف المنتج بنجاح");
-        })
-        .catch(error => {
-          alert("❌ حدث خطأ أثناء الحذف: " + error.message);
-        });
+        .then(() => alert("✅ تم حذف المنتج بنجاح"))
+        .catch(error => alert("❌ حدث خطأ أثناء الحذف: " + error.message));
     }
   }
 
+  // عرض نموذج إضافة منتج إذا كان أدمن
   if (isAdmin) {
     const form = document.createElement("div");
     form.innerHTML = `
@@ -319,8 +307,8 @@
         <h2 style="text-align:center;">إضافة منتج جديد</h2>
         <div style="max-width: 400px; margin:auto;">
           <input id="name" type="text" placeholder="اسم المنتج" style="width:100%; padding:10px; margin:10px 0;">
-          <input id="image" type="text" placeholder="رابط الصورة (اختياري إذا أضفت فيديو)" style="width:100%; padding:10px; margin:10px 0;">
-          <input id="video" type="text" placeholder="رابط الفيديو (اختياري)" style="width:100%; padding:10px; margin:10px 0;">
+          <input id="image" type="text" placeholder="رابط الصورة (اختياري إذا كان هناك فيديو)" style="width:100%; padding:10px; margin:10px 0;">
+          <input id="video" type="text" placeholder="رابط الفيديو (اختياري - مثال: https://streamable.com/e/xyz123)" style="width:100%; padding:10px; margin:10px 0;">
           <textarea id="desc" placeholder="وصف المنتج" style="width:100%; padding:10px; margin:10px 0;"></textarea>
           <button onclick="addProduct()" style="background-color:green; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">➕ إضافة المنتج</button>
         </div>
@@ -329,14 +317,15 @@
     document.body.insertBefore(form, document.getElementById("contact"));
   }
 
+  // وظيفة إضافة المنتج
   function addProduct() {
     const name = document.getElementById("name").value.trim();
     const image = document.getElementById("image").value.trim();
     const video = document.getElementById("video").value.trim();
     const desc = document.getElementById("desc").value.trim();
 
-    if (!name || (!image && !video) || !desc) {
-      alert("يرجى تعبئة اسم المنتج والوصف، وإضافة صورة أو فيديو");
+    if (!name || !desc) {
+      alert("يرجى تعبئة اسم المنتج والوصف على الأقل");
       return;
     }
 
@@ -353,8 +342,10 @@
     });
   }
 
+  // تحميل المنتجات عند فتح الصفحة
   loadProducts();
 </script>
+
 
 </body>
 </html>
