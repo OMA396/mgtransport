@@ -236,6 +236,7 @@
 <!-- Firebase -->
   <!-- Firebase SDK -->
 <!-- Firebase -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
@@ -264,6 +265,12 @@
       snapshot.forEach(child => {
         const data = child.val();
         const id = child.key;
+
+        // تعديل رابط الفيديو لو من pixeldrain
+        if (data.image.includes("pixeldrain.com/u/")) {
+          data.image = data.image.replace("/u/", "/api/file/") + "?download";
+        }
+
         const isVideo = data.image.includes("pixeldrain.com");
 
         const mediaElement = isVideo
@@ -329,7 +336,7 @@
 
     // تعديل الرابط لو كان من Pixeldrain
     if (image.includes("pixeldrain.com/u/")) {
-      image = image.replace("/u/", "/api/file/");
+      image = image.replace("/u/", "/api/file/") + "?download";
     }
 
     db.ref("products").push({ name, image, description: desc }, (error) => {
@@ -346,6 +353,7 @@
 
   loadProducts();
 </script>
+
 
 
 
