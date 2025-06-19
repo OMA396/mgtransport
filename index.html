@@ -233,12 +233,10 @@
   <p>📧 راسلنا عبر الإيميل: <strong><a href="mailto:ibrahammohamad55@gmail.com">ibrahammohamad55@gmail.com</a></strong></p>
 </section>
 
-<!-- Firebase -->
-  <!-- Firebase SDK -->
-<!-- Firebase -->
-<!-- Firebase -->
+<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-storage-compat.js"></script>
 
 <script>
   const firebaseConfig = {
@@ -248,12 +246,12 @@
     projectId: "mgtrasport-53d7e",
     storageBucket: "mgtrasport-53d7e.appspot.com",
     messagingSenderId: "950504597071",
-    appId: "1:950504597071:web:eec286bb6103bf0037ec3a",
-    measurementId: "G-XS1920ESD0"
+    appId: "1:950504597071:web:eec286bb6103bf0037ec3a"
   };
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.database();
+  const storage = firebase.storage();
 
   const params = new URLSearchParams(window.location.search);
   const isAdmin = params.get("admin") === "1234";
@@ -266,18 +264,14 @@
         const data = child.val();
         const id = child.key;
 
-        // تعديل رابط الفيديو لو من pixeldrain
         if (data.image.includes("pixeldrain.com/u/")) {
           data.image = data.image.replace("/u/", "/api/file/") + "?download";
         }
 
-        const isVideo = data.image.includes("pixeldrain.com");
+        const isVideo = data.image.includes("pixeldrain.com") || data.image.includes(".mp4");
 
         const mediaElement = isVideo
-          ? `<video controls style="width:100%; height:200px;">
-               <source src="${data.image}" type="video/mp4">
-               متصفحك لا يدعم تشغيل الفيديو.
-             </video>`
+          ? `<video controls style="width:100%; height:200px;"><source src="${data.image}" type="video/mp4"></video>`
           : `<img src="${data.image}" alt="${data.name}" style="width:100%; height:200px; object-fit:cover;">`;
 
         grid.innerHTML += `
@@ -289,22 +283,14 @@
               <a href="details.html?name=${encodeURIComponent(data.name)}&desc=${encodeURIComponent(data.description)}&image=${encodeURIComponent(data.image)}">تفاصيل</a>
               ${isAdmin ? `<br><button onclick="deleteProduct('${id}')" style="margin-top: 0.5rem; background-color: red; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;">🗑️ حذف</button>` : ""}
             </div>
-          </div>
-        `;
+          </div>`;
       });
     });
   }
 
   function deleteProduct(id) {
     if (confirm("هل أنت متأكد أنك تريد حذف هذا المنتج؟")) {
-      db.ref("products").child(id).remove()
-        .then(() => {
-          alert("✅ تم حذف المنتج بنجاح");
-          location.reload();
-        })
-        .catch(error => {
-          alert("❌ حدث خطأ أثناء الحذف: " + error.message);
-        });
+      db.ref("products").child(id).remove().then(() => location.reload());
     }
   }
 
@@ -322,6 +308,20 @@
       </div>
     `;
     document.body.insertBefore(form, document.getElementById("contact"));
+
+    const uploadForm = document.createElement("div");
+    uploadForm.innerHTML = `
+      <div style="padding: 2rem; border-top: 1px solid #ccc;">
+        <h2 style="text-align:center;">أو ✚ أضف من جهازك مباشرة</h2>
+        <div style="max-width:400px; margin:auto;">
+          <input type="file" id="uploadFile" accept="image/*,video/*" style="margin-bottom:10px; width:100%; padding:10px;">
+          <input id="uploadDesc" type="text" placeholder="وصف المحتوى" style="width:100%; padding:10px; margin-bottom:10px;">
+          <button onclick="uploadFromDevice()" style="background-color:#009688; color:white; padding:10px 20px; border:none; border-radius:5px; cursor:pointer;">رفع وإضافة</button>
+          <p id="uploadStatus" style="color:green; margin-top:10px;"></p>
+        </div>
+      </div>
+    `;
+    document.body.insertBefore(uploadForm, document.getElementById("contact"));
   }
 
   function addProduct() {
@@ -334,32 +334,46 @@
       return;
     }
 
-    // تعديل الرابط لو كان من Pixeldrain
     if (image.includes("pixeldrain.com/u/")) {
       image = image.replace("/u/", "/api/file/") + "?download";
     }
 
-    db.ref("products").push({ name, image, description: desc }, (error) => {
-      if (error) {
-        alert("❌ حدث خطأ أثناء الإضافة: " + error.message);
-      } else {
-        alert("✅ تمت إضافة المنتج بنجاح!");
-        document.getElementById("name").value = "";
-        document.getElementById("image").value = "";
-        document.getElementById("desc").value = "";
-      }
-    });
+    db.ref("products").push({ name, image, description: desc });
+  }
+
+  function uploadFromDevice() {
+    const fileInput = document.getElementById("uploadFile");
+    const file = fileInput.files[0];
+    const desc = document.getElementById("uploadDesc").value.trim();
+    const status = document.getElementById("uploadStatus");
+
+    if (!file || !desc) {
+      alert("يرجى اختيار ملف وإدخال وصف.");
+      return;
+    }
+
+    status.textContent = "⏳ جاري الرفع...";
+
+    const fileRef = firebase.storage().ref().child("uploads/" + Date.now() + "_" + file.name);
+    fileRef.put(file)
+      .then(() => fileRef.getDownloadURL())
+      .then(url => {
+        return db.ref("products").push({
+          name: "محتوى مرفوع",
+          image: url,
+          description: desc
+        });
+      })
+      .then(() => {
+        status.textContent = "✅ تم الرفع والإضافة بنجاح!";
+        fileInput.value = "";
+        document.getElementById("uploadDesc").value = "";
+      })
+      .catch(err => status.textContent = "❌ خطأ: " + err.message);
   }
 
   loadProducts();
 </script>
-
-
-
-
-
-
-
 
 </body>
 </html>
