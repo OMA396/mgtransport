@@ -10,6 +10,7 @@
       margin: 0;
       font-family: 'Cairo', sans-serif;
       scroll-behavior: smooth;
+      background-color: #fff;
     }
     header {
       background-color: #f9f9f9;
@@ -73,7 +74,7 @@
       line-height: 1.8;
     }
     .servies {
-      background-image: url(b.png);
+      background-image: url('b.png');
       background-size: cover;
       background-position: center;
       color: white;
@@ -98,11 +99,20 @@
       border-radius: 1rem;
       backdrop-filter: blur(5px);
     }
+    .product-section {
+      padding: 2rem;
+      background-color: #f7f7f7;
+      text-align: center;
+    }
+    .section-title {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
       gap: 1.5rem;
-      padding: 1rem 2rem 3rem;
+      padding: 1rem 2rem;
     }
     .card {
       background-color: #fff;
@@ -194,6 +204,8 @@
   <p>📞 <a href="https://wa.me/201010872267">+201010872267</a></p>
   <p>📧 <a href="mailto:ibrahammohamad55@gmail.com">ibrahammohamad55@gmail.com</a></p>
 </section>
+
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
@@ -204,7 +216,7 @@
     authDomain: "mgcambany.firebaseapp.com",
     databaseURL: "https://mgcambany-default-rtdb.firebaseio.com",
     projectId: "mgcambany",
-    storageBucket: "mgcambany.firebasestorage.app",
+    storageBucket: "mgcambany.appspot.com",
     messagingSenderId: "748457475680",
     appId: "1:748457475680:web:fbd1ecdcd54acc00760d05",
     measurementId: "G-S5Z5FFLF9P"
@@ -244,7 +256,6 @@
       db.ref("products").child(id).remove()
         .then(() => {
           alert("✅ تم حذف المنتج بنجاح");
-          location.reload();
         })
         .catch(error => {
           alert("❌ حدث خطأ أثناء الحذف: " + error.message);
@@ -292,7 +303,6 @@
 
   loadProducts();
 </script>
-
 
 </body>
 </html>
