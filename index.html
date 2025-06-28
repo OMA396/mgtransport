@@ -221,6 +221,9 @@
     appId: "1:748457475680:web:fbd1ecdcd54acc00760d05",
     measurementId: "G-S5Z5FFLF9P"
   };
+<!-- ... (باقي الكود بدون تغيير في الأعلى) -->
+
+
 
   firebase.initializeApp(firebaseConfig);
   firebase.analytics();
@@ -297,12 +300,17 @@
         document.getElementById("name").value = "";
         document.getElementById("image").value = "";
         document.getElementById("desc").value = "";
+        loadProducts(); // ✅ تحديث المنتجات مباشرة بعد الإضافة
       }
     });
   }
 
   loadProducts();
 </script>
+
+</body>
+</html>
+
 
 </body>
 </html>
