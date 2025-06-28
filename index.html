@@ -23,9 +23,6 @@
       display: block;
       margin: auto;
     }
-    nav {
-      margin-top: 1rem;
-    }
     nav ul {
       list-style: none;
       padding: 0;
@@ -101,23 +98,6 @@
       border-radius: 1rem;
       backdrop-filter: blur(5px);
     }
-    .servies-content h2 {
-      font-size: 1.8rem;
-      margin-bottom: 1rem;
-      color: #fff;
-    }
-    .servies-content ul {
-      list-style: none;
-      padding: 0;
-      font-size: 1.2rem;
-      line-height: 2;
-    }
-    .section-title {
-      text-align: center;
-      font-size: 2rem;
-      margin: 2rem 0 1rem;
-      color: #222;
-    }
     .product-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -135,7 +115,7 @@
       transform: translateY(-8px);
       box-shadow: 0 8px 20px rgba(0,0,0,0.2);
     }
-    .card img, .card video, .card iframe {
+    .card img {
       width: 100%;
       height: 200px;
       object-fit: cover;
@@ -160,23 +140,10 @@
       font-weight: bold;
       text-decoration: none;
     }
-    .card-content a:hover {
-      color: #009688;
-    }
     #contact {
       padding: 2rem;
       background-color: #f1f1f1;
       text-align: center;
-    }
-    #contact img {
-      width: 50px;
-      height: 50px;
-      margin-bottom: 1rem;
-    }
-    #contact a {
-      color: #25D366;
-      text-decoration: none;
-      font-weight: bold;
     }
   </style>
 </head>
@@ -197,12 +164,7 @@
   <img src="h.png" class="heroimg" alt="صورة شاحنة">
   <div class="herotext">
     <h2>M & G للنقل والشحن</h2>
-    <p>
-      خبرة سنوات في مجال النقل البري إلى جميع المحافظات.  
-      نوفر جميع أنواع سيارات النقل لخدمة الشركات والمصانع،  
-      مع إمكانية التعاقد بنظام أسبوعي، شهري، أو بالنقلة حسب الاتفاق.  
-      نضمن لكم سهولة في التعامل واحترافية في الأداء.
-    </p>
+    <p>خبرة سنوات في مجال النقل البري إلى جميع المحافظات...</p>
   </div>
 </section>
 
@@ -227,20 +189,16 @@
 </section>
 
 <section id="contact">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب">
-  <p>تواصل معنا على <strong style="color:#25D366;">واتساب</strong> مع <strong>الأستاذ إبراهيم محمد</strong></p>
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="واتساب" style="width:50px;">
+  <p>تواصل معنا على <strong style="color:#25D366;">واتساب</strong></p>
   <p>📞 <a href="https://wa.me/201010872267">+201010872267</a></p>
-  <p>📧 راسلنا عبر الإيميل: <strong><a href="mailto:ibrahammohamad55@gmail.com">ibrahammohamad55@gmail.com</a></strong></p>
+  <p>📧 <a href="mailto:ibrahammohamad55@gmail.com">ibrahammohamad55@gmail.com</a></p>
 </section>
 
-<!-- Firebase SDKs -->
 <!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-analytics-compat.js"></script>
-
 <script>
-  // إعداد Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyBUYFKVQ25vGirRrQ61rhbF20ppQeePHDA",
     authDomain: "mgcambany.firebaseapp.com",
@@ -251,17 +209,12 @@
     appId: "1:748457475680:web:fbd1ecdcd54acc00760d05",
     measurementId: "G-S5Z5FFLF9P"
   };
-
-  // تهيئة التطبيق (مرّة واحدة)
   firebase.initializeApp(firebaseConfig);
-  firebase.analytics();
   const db = firebase.database();
 
-  // تحديد إذا كان المستخدم Admin
   const params = new URLSearchParams(window.location.search);
   const isAdmin = params.get("admin") === "1234";
 
-  // تحميل المنتجات من قاعدة البيانات
   function loadProducts() {
     const grid = document.getElementById("productGrid");
     db.ref("products").on("value", (snapshot) => {
@@ -275,8 +228,7 @@
             <div class="card-content">
               <h3>${data.name}</h3>
               <p>${data.description}</p>
-              <a href="details.html?name=${encodeURIComponent(data.name)}&desc=${encodeURIComponent(data.description)}&image=${encodeURIComponent(data.image)}">تفاصيل</a>
-              ${isAdmin ? `<br><button onclick="deleteProduct('${id}')" style="margin-top: 0.5rem; background-color: red; color: white; border: none; padding: 0.4rem 0.8rem; border-radius: 5px; cursor: pointer;">🗑️ حذف</button>` : ""}
+              ${isAdmin ? `<button onclick="deleteProduct('${id}')" style="background:red;color:white;padding:5px;border:none;border-radius:5px;cursor:pointer;">🗑️ حذف</button>` : ""}
             </div>
           </div>
         `;
@@ -284,18 +236,17 @@
     });
   }
 
-  // حذف منتج
   function deleteProduct(id) {
-    if (confirm("هل أنت متأكد أنك تريد حذف هذا المنتج؟")) {
-      db.ref("products").child(id).remove()
-        .then(() => alert("✅ تم الحذف بنجاح"))
-        .catch(error => alert("❌ فشل الحذف: " + error.message));
+    if (confirm("هل تريد حذف هذا المنتج؟")) {
+      db.ref("products").child(id).remove().then(() => {
+        alert("تم الحذف بنجاح");
+      });
     }
   }
 
-  // عرض الفورم لو المستخدم Admin
   if (isAdmin) {
-    const form = document.createElement("div");
+    const form = document.createElement("section");
+    form.style.background = "#f9f9f9";
     form.innerHTML = `
       <div style="padding: 2rem;">
         <h2 style="text-align:center;">إضافة منتج جديد</h2>
@@ -310,7 +261,6 @@
     document.body.insertBefore(form, document.getElementById("contact"));
   }
 
-  // إضافة منتج جديد
   function addProduct() {
     const name = document.getElementById("name").value.trim();
     const image = document.getElementById("image").value.trim();
@@ -323,7 +273,7 @@
 
     db.ref("products").push({ name, image, description: desc }, (error) => {
       if (error) {
-        alert("❌ حدث خطأ: " + error.message);
+        alert("❌ فشل الإضافة: " + error.message);
       } else {
         alert("✅ تمت الإضافة!");
         document.getElementById("name").value = "";
@@ -333,11 +283,8 @@
     });
   }
 
-  // تحميل المنتجات عند فتح الصفحة
   loadProducts();
 </script>
-
-
 
 </body>
 </html>
