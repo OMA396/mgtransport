@@ -207,7 +207,7 @@
 
  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
-  <script>
+ <script>
   const firebaseConfig = {
     apiKey: "AIzaSyDnFoa6C2FIxeK06Y1fj0_8u9LyF4ma8sg",
     authDomain: "mgtrasport-53d7e.firebaseapp.com",
@@ -232,7 +232,7 @@
         const id = child.key;
         grid.innerHTML += `
           <div class="card">
-            ${data.video ? `<video controls src="${data.video}"></video>` : `<img src="${data.image}" alt="${data.name}">`}
+            ${data.video ? `<video controls src="${data.video}" style="width:100%; max-height:200px;"></video>` : `<img src="${data.image}" alt="${data.name}">`}
             <div class="card-content">
               <h3>${data.name}</h3>
               <p>${data.description}</p>
@@ -296,7 +296,7 @@
         });
         const result = await res.json();
         if (result.status === "ok") {
-          video = result.data.downloadPage; // يمكنك التعديل لاحقًا لأخذ directLink إن لزم
+          video = result.data.directLink; // ✅ الرابط المباشر للفيديو
         } else {
           alert("❌ فشل رفع الفيديو إلى Gofile");
           return;
